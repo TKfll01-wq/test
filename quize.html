@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>クイズゲーム</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    .question { font-size: 20px; margin: 20px 0; }
+    .choices button {
+      display: block; margin: 10px auto; padding: 10px 20px;
+      border-radius: 8px; border: none; background: #4CAF50; color: white;
+      cursor: pointer; font-size: 16px;
+    }
+    .choices button:hover { background: #45a049; }
+    #result { margin-top: 20px; font-size: 18px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>クイズゲーム</h1>
+  <div id="quiz">
+    <div class="question" id="question"></div>
+    <div class="choices" id="choices"></div>
+    <div id="result"></div>
+    <button id="next" style="display:none;">次の問題へ</button>
+  </div>
+
+  <script>
+    // 問題データ（ここに増やせる！）
+    const quizData = [
+      { q: "日本の首都は？", choices: ["大阪", "東京", "福岡"], answer: 1 },
+      { q: "2 + 2 は？", choices: ["3", "4", "5"], answer: 1 },
+      { q: "イヌは英語で？", choices: ["Cat", "Dog", "Bird"], answer: 1 }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const choicesEl = document.getElementById("choices");
+    const resultEl = document.getElementById("result");
+    const nextBtn = document.getElementById("next");
+
+    function loadQuiz() {
+      resultEl.textContent = "";
+      nextBtn.style.display = "none";
+      questionEl.textContent = quizData[current].q;
+      choicesEl.innerHTML = "";
+
+      quizData[current].choices.forEach((choice, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = choice;
+        btn.onclick = () => checkAnswer(i);
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      if (selected === quizData[current].answer) {
+        resultEl.textContent = "正解！";
+        score++;
+      } else {
+        resultEl.textContent = "不正解… 正解は「" + quizData[current].choices[quizData[current].answer] + "」";
+      }
+      nextBtn.style.display = "inline-block";
+    }
+
+    nextBtn.onclick = () => {
+      current++;
+      if (current < quizData.length) {
+        loadQuiz();
+      } else {
+        questionEl.textContent = "終了！ あなたのスコアは " + score + " / " + quizData.length;
+        choicesEl.innerHTML = "";
+        nextBtn.style.display = "none";
+      }
+    };
+
+    loadQuiz(); // 最初の問題を表示
+  </script>
+</body>
+</html>
