@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画像付きクイズゲーム</title>
+  <style>
+    body { font-family: "Segoe UI", sans-serif; text-align: center; padding: 20px; background-color: #f7f7f7; }
+    h1 { color: #333; }
+
+    .quiz-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    img {
+      width: 100%; /*  画面幅に自動で合わせる */
+      height: auto;
+      border-radius: 10px;
+    }
+
+     button {
+      width: 100%; /*  スマホでボタンが押しやすく */
+      padding: 15px;
+      margin: 10px 0;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .question { font-size: 20px; margin: 10px 0; }
+    .choices button {
+      display: block; margin: 10px auto; padding: 10px 20px;
+      border-radius: 8px; border: none; background: #007BFF; color: white;
+      cursor: pointer; font-size: 16px;
+      width: 60%;
+    }
+    .choices button:hover { background: #0056b3; }
+    #result { margin-top: 15px; font-size: 18px; font-weight: bold; }
+    #next { margin-top: 20px; padding: 10px 20px; font-size: 16px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>画像付きクイズゲーム</h1>
+  <div id="quiz">
+    <div id="imageContainer"></div>
+    <div class="question" id="question"></div>
+    <div class="choices" id="choices"></div>
+    <div id="result"></div>
+    <button id="next" style="display:none;">次の問題へ</button>
+  </div>
+
+  <script>
+    // 🧩 クイズデータ（画像ファイルは同じフォルダに置いてください）
+    const quizData = [
+      {
+        q: "この動物はなに？",
+        img: "dog.png", // ← ファイル名だけでOK（quiz.htmlと同じフォルダに置く）
+        choices: ["ネコ", "イヌ", "トリ"],
+        answer: 1
+      },
+      {
+        q: "この都市はどこ？",
+        img: "tokyo.jpg",
+        choices: ["大阪", "東京", "福岡"],
+        answer: 1
+      },
+      {
+        q: "この果物はなに？",
+        img: "apple.jpg",
+        choices: ["りんご", "みかん", "ぶどう"],
+        answer: 0
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const choicesEl = document.getElementById("choices");
+    const resultEl = document.getElementById("result");
+    const imageContainer = document.getElementById("imageContainer");
+    const nextBtn = document.getElementById("next");
+
+    function loadQuiz() {
+      resultEl.textContent = "";
+      nextBtn.style.display = "none";
+
+      // 画像を表示
+      imageContainer.innerHTML = `<img src="${quizData[current].img}" alt="問題画像">`;
+
+      // 問題文を表示
+      questionEl.textContent = quizData[current].q;
+
+      // 選択肢を生成
+      choicesEl.innerHTML = "";
+      quizData[current].choices.forEach((choice, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = choice;
+        btn.onclick = () => checkAnswer(i);
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected) {
+      if (selected === quizData[current].answer) {
+        resultEl.textContent = "✅ 正解！";
+        score++;
+      } else {
+        const correct = quizData[current].choices[quizData[current].answer];
+        resultEl.textContent = `❌ 不正解… 正解は「${correct}」`;
+      }
+      nextBtn.style.display = "inline-block";
+    }
+
+    nextBtn.onclick = () => {
+      current++;
+      if (current < quizData.length) {
+        loadQuiz();
+      } else {
+        imageContainer.innerHTML = "";
+        questionEl.textContent = "🎉 終了！ あなたのスコアは " + score + " / " + quizData.length;
+        choicesEl.innerHTML = "";
+        resultEl.textContent = "";
+        nextBtn.style.display = "none";
+      }
+    };
+
+    // 最初の問題を読み込む
+    loadQuiz();
+  </script>
+</body>
+</html>
