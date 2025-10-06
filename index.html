@@ -132,6 +132,39 @@
       }
     };
 
+    nextBtn.onclick = () => {
+    current++;
+    if (current < quizData.length) {
+      loadQuiz();
+    } else {
+      imageContainer.innerHTML = "";
+      questionEl.textContent = "🎉 終了！ あなたのスコアは " + score + " / " + quizData.length;
+      choicesEl.innerHTML = "";
+      resultEl.textContent = "";
+      nextBtn.style.display = "none";
+
+      // ✅ スコア送信部分を追加
+      const playerName = prompt("あなたの名前を入力してください（任意）", "匿名");
+
+      fetch("https://script.google.com/macros/s/AKfycbxUwGxprxnbi6T3SHxuVlbNTm8hqeVe0n5H6DmEOTZkFb89K_p8-9UO688h4d85kH6S/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: playerName,
+          score: score,
+          timestamp: new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })
+        })
+      })
+      .then(() => {
+        alert("スコアを送信しました！");
+      })
+      .catch(err => {
+        console.error(err);
+        alert("スコア送信に失敗しました。");
+      });
+    }
+    };
     // 最初の問題を読み込む
     loadQuiz();
   </script>
